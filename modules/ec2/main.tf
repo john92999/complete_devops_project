@@ -1,7 +1,7 @@
 resource "aws_instance" "complete_project_ec2" {
     availability_zone = local.availability_zone
     ami = var.ami_name
-    instance_type = var.instance_type_name[terraform.workspace]
+    instance_type = var.instance_type_name
     key_name = "demoapp"
     vpc_security_group_ids = [aws_security_group.complete_project_security_group.id]
     tags = {
