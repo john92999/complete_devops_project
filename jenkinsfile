@@ -23,6 +23,11 @@ pipeline{
     }
 
     stages {
+        stage ('git'){
+            steps {
+                git url:'https://github.com/john92999/complete_devops_project.git', branch: 'terraform'
+            }
+        }
         stage ('Init and apply'){
             steps{
                 script {
