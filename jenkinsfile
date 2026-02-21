@@ -15,7 +15,6 @@ pipeline{
         AWS_REGION       = "ap-south-1"
     }
 
-
     options {
         retry(2)
     }
@@ -33,14 +32,27 @@ pipeline{
                         string(credentialsId: 'aws-access-key-id', variable: 'AWS_ACCESS_KEY_ID'),
                         string(credentialsId: 'aws-secret-access-key', variable: 'AWS_SECRET_ACCESS_KEY')
                     ]){
-                        terraformInitialize()
-                        terraformWorkSpace(params.ENVIRONMENT)
-                        sh 'terraform validate'
-                        sh "terraform plan -var-file=${params.ENVIRONMENT}.tfvars -out=tfplan"
-                        sh "terraform apply -auto-approve tfplan"
+                        // FIX 1: Export credentials as env vars so Terraform's AWS provider can read them
+                        withEnv([
+                            "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}",
+                            "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"
+                        ]){
+                            terraformInitialize()
+                            terraformWorkSpace(params.ENVIRONMENT)
+                            sh 'terraform validate'
+                            sh "terraform plan -var-file=${params.ENVIRONMENT}.tfvars -out=tfplan"
+                            sh "terraform apply -auto-approve tfplan"
+                        }
                     }
                 }
             }
+        }
+    }
+
+    // FIX 2: Clean up tfplan after every run (success or failure)
+    post {
+        always {
+            sh 'rm -f tfplan'
         }
     }
 }
