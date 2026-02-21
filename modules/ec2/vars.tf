@@ -5,7 +5,7 @@ variable "ami_name" {
 
 variable "instance_type_name" {
     description = "Type of the instance"
-    type = map(string)
+    type = string
 }
 
 variable "ingress_rules_complete_project" {
