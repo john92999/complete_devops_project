@@ -19,7 +19,7 @@ variable "ami_name" {
 }
 
 variable "instance_type_name" {
-  type = map(string)
+  type = string
 }
 
 variable "ebs_volumes" {
