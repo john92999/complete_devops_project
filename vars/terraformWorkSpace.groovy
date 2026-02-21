@@ -1,6 +1,6 @@
 def call(String envName){
     def status = sh(
-        script: "terraform workspace select ${envName}"
+        script: "terraform workspace select ${envName}",
         returnStatus: true
     )
 
