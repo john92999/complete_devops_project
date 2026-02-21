@@ -1,0 +1,43 @@
+@Library ("terraform-shared-library") _
+@Library ("common-shared-lib") _
+pipeline{
+    agent any
+
+    parameters {
+        choice(
+            name: 'ENVIRONMENT',
+            choices: ['dev', 'prod'],
+            description: 'Select Terraform Workspace'
+        )
+    }
+
+    environment{
+        TF_IN_AUTOMATION = "true"
+        AWS_REGION       = "ap-south-1"
+    }
+
+    triggers { pollSCM('* * * * *') }
+
+    options {
+        retry(2)
+    }
+
+    stages {
+        stage ('Init and apply'){
+            steps{
+                script {
+                    withCredentials([
+                        string(credentialsId: 'aws-access-key-id', variable: 'AWS_ACCESS_KEY_ID')
+                        string(credentialsId: 'aws-secret-access-key', variable: 'AWS_SECRET_ACCESS_KEY')
+                    ]){
+                        terraformInitialize()
+                        terraformWorkSpace(params.ENVIRONMENT)
+                        sh 'terraform validate'
+                        sh 'terraform plan -out=tfplan'
+                        sh 'terraform apply --auto-approve'
+                    }
+                }
+            }
+        }
+    }
+}
