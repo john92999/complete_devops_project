@@ -9,5 +9,7 @@
   loop: "{{ applications }}"
 - name: Include go installation tasks
   include_tasks: go.yaml
-  notify:
-    - run update again
+- name: Run update again if go changed
+  ansible.builtin.meta: flush_handlers
+  when: go_install_result.changed
+  notify: run update again

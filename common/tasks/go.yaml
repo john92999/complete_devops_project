@@ -3,6 +3,7 @@
     name: golang
     state: present
     update_cache: yes
+  register: go_install_result
 - name: verify go installation
   ansible.builtin.command: go version
   register: go_version
