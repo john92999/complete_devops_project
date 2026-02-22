@@ -1,0 +1,11 @@
+- name: install go
+  ansible.builtin.apt:
+    name: golang
+    state: present
+    update_cache: yes
+- name: verify go installation
+  ansible.builtin.command: go version
+  register: go_version
+- name: show go version
+  ansible.builtin.debug:
+    var: go_version.stdout
