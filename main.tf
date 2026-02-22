@@ -28,6 +28,14 @@ variable "ebs_volumes" {
   }))
 }
 
+variable "private_key_path" {
+  type = string
+}
+
+variable "key_name" {
+  type = string
+}
+
 module "ec2" {
     source = "./modules/ec2"
     ami_name = var.ami_name
@@ -35,4 +43,6 @@ module "ec2" {
     vpc_id        = module.vpc.vpc_id
     instance_type_name = var.instance_type_name
     ebs_volumes   = var.ebs_volumes
+    key_name = var.key_name
+    private_key_path = var.private_key_path
 }

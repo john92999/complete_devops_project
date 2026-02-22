@@ -7,3 +7,6 @@ ebs_volumes = {
     size = 40
   }
 }
+
+key_name = "demoapp"
+private_key_path = "/home/ubuntu/demoapp.pem"

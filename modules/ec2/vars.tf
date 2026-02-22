@@ -11,7 +11,7 @@ variable "instance_type_name" {
 variable "ingress_rules_complete_project" {
     description = "Ingress rules for ec2 machine"
     type = list(number)
-    default = [80,8080,443]
+    default = [80,8080,443,22]
 }
 
 variable "vpc_id" {
@@ -29,4 +29,14 @@ variable "ebs_volumes" {
   type = map(object({
     size = number
   }))
+}
+
+variable "private_key_path" {
+  description = "Path to SSH private key for EC2"
+  type        = string
+}
+
+variable "key_name" {
+  description = "SSH key name for EC2"
+  type        = string
 }

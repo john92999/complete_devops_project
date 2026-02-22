@@ -2,10 +2,26 @@ resource "aws_instance" "complete_project_ec2" {
     availability_zone = local.availability_zone
     ami = var.ami_name
     instance_type = var.instance_type_name
-    key_name = "demoapp"
+    key_name = var.key_name
+    associate_public_ip_address = true
     vpc_security_group_ids = [aws_security_group.complete_project_security_group.id]
     tags = {
       Name = "complete_project_ec2_machine"
+    }
+    connection {
+      type = "ssh"
+      host = self.public_ip
+      user = "ubuntu"
+      private_key = file(var.private_key_path)
+    }
+    provisioner "remote-exec" {
+      inline = [ 
+        "sudo apt update -y",
+        "sudo apt install software-properties-common -y",
+        "sudo apt-add-repository --yes --update ppa:ansible/ansible",
+        "sudo apt update -y",
+        "sudo apt install ansible -y"
+       ]
     }
 }
 
