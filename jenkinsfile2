@@ -13,7 +13,7 @@ pipeline{
                 script {
                     // Change 'terraform-pipeline' to match your exact Jenkins job name for Pipeline 1
                     copyArtifacts(
-                        projectName: 'terraform-pipeline',
+                        projectName: 'Terraform Script',
                         filter: 'inventory.ini',
                         fingerprintArtifacts: true
                     )
