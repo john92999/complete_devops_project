@@ -1,0 +1,5 @@
+name: Install required apps in ubuntu
+become: yes
+hosts: all
+tasks:
+  - name: ubuntu apps
