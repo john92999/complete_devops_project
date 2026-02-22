@@ -1,0 +1,50 @@
+pipeline{
+    agent any
+
+    stages {
+        stage('git'){
+            steps {
+                git url:'https://github.com/john92999/complete_devops_project.git', branch: 'ansible'
+            }
+        }
+
+        stage('Get Inventory'){
+            steps {
+                script {
+                    // Change 'terraform-pipeline' to match your exact Jenkins job name for Pipeline 1
+                    copyArtifacts(
+                        projectName: 'terraform-pipeline',
+                        filter: 'inventory.ini',
+                        fingerprintArtifacts: true
+                    )
+                    sh 'cat inventory.ini'
+                }
+            }
+        }
+
+        stage('Wait for EC2'){
+            steps {
+                // Waits 30 seconds for EC2 to finish booting and ansible install
+                sleep(time: 30, unit: 'SECONDS')
+            }
+        }
+
+        stage('Run Ansible Playbook'){
+            steps {
+                sh 'ansible-playbook -i inventory.ini "installation_in _ubuntu.yaml"'
+            }
+        }
+    }
+
+    post {
+        always {
+            sh 'rm -f inventory.ini'
+        }
+        success {
+            echo "Ansible playbook ran successfully on EC2!"
+        }
+        failure {
+            echo "Ansible playbook failed. Check logs above."
+        }
+    }
+}

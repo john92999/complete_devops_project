@@ -32,7 +32,6 @@ pipeline{
                         string(credentialsId: 'aws-access-key-id', variable: 'AWS_ACCESS_KEY_ID'),
                         string(credentialsId: 'aws-secret-access-key', variable: 'AWS_SECRET_ACCESS_KEY')
                     ]){
-                        // FIX 1: Export credentials as env vars so Terraform's AWS provider can read them
                         withEnv([
                             "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}",
                             "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"
@@ -47,12 +46,49 @@ pipeline{
                 }
             }
         }
+
+        // ✅ NEW STAGE ADDED
+        stage ('Save Inventory'){
+            steps{
+                script {
+                    withCredentials([
+                        string(credentialsId: 'aws-access-key-id', variable: 'AWS_ACCESS_KEY_ID'),
+                        string(credentialsId: 'aws-secret-access-key', variable: 'AWS_SECRET_ACCESS_KEY')
+                    ]){
+                        withEnv([
+                            "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}",
+                            "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"
+                        ]){
+                            def ec2_ip = sh(
+                                script: "terraform output -raw instance_ip",
+                                returnStdout: true
+                            ).trim()
+
+                            echo "EC2 Public IP: ${ec2_ip}"
+
+                            writeFile file: 'inventory.ini', text: """\
+[ec2]
+${ec2_ip} ansible_user=ubuntu ansible_ssh_private_key_file=/var/lib/jenkins/.ssh/demoapp.pem ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+"""
+                            archiveArtifacts artifacts: 'inventory.ini'
+                        }
+                    }
+                }
+            }
+        }
     }
 
-    // FIX 2: Clean up tfplan after every run (success or failure)
+    // ✅ NEW POST BLOCK ADDED
     post {
         always {
             sh 'rm -f tfplan'
+        }
+        success {
+            // Change 'ansible-pipeline' to match your exact Jenkins job name for Pipeline 2
+            build job: 'installtion_in _created_ec2', wait: false
+        }
+        failure {
+            echo "Pipeline 1 failed. Ansible pipeline will NOT be triggered."
         }
     }
 }
