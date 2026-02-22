@@ -9,4 +9,4 @@ ebs_volumes = {
 }
 
 key_name = "demoapp"
-private_key_path = "/home/ubuntu/demoapp.pem"
+private_key_path = "/var/lib/jenkins/.ssh/demoapp.pem"
