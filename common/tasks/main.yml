@@ -1,5 +1,6 @@
 ---
 # tasks file for common
+- import_tasks: java.yml
 - name: "install required application"
   ansible.builtin.apt:
     name: "{{ item }}"

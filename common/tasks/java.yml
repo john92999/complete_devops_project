@@ -1,0 +1,5 @@
+- name: install java
+  ansible.builtin.apt:
+    name: openjdk-21-jdk
+    update_cache: true
+    state: present
