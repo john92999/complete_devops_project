@@ -1,5 +1,7 @@
-name: Install required apps in ubuntu
-become: yes
-hosts: all
-tasks:
-  - name: ubuntu apps
+---
+- name: Install common packages
+  hosts: all
+  become: true
+
+  roles:
+    - common

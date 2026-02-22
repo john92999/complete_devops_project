@@ -1,0 +1,8 @@
+---
+# tasks file for common
+- name: "install required application"
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  loop: "{{ applications }}"

@@ -1,0 +1,3 @@
+---
+# vars file for common
+applications: [python3-pip, python3]
