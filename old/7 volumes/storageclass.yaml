@@ -1,0 +1,14 @@
+# everytime there is a need to create a new storage class we should create a new yaml file for PV. Storage class gives us the ability to dynamically provision PVs. We can create a storage class and then use it in our PVC, and the PV will be created automatically when we create the PVC.
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: demo-storage
+provisioner: k8s.io/minikube-hostpath
+volumeBindingMode: Immediate
+reclaimPolicy: Delete
+#volume binding mode tell us how the pv will be created when we create a pvc.
+# Immediate: the pv will be created immediately when we create the pvc.
+# WaitForFirstConsumer: the pv will be created when the pvc is bound to a pod
+
+# reclaimPolicy: Retain, the pv will not be deleted when the pvc is deleted, and we can reuse the pv for another pvc.
+# reclaimPolicy: Delete, the pv will be deleted when the pvc is deleted.
