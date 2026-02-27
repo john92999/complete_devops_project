@@ -10,4 +10,4 @@ spec:
     - protocol: TCP
       targetPort: 80
       port: 8095
-  type: NodePort
+  type: LoadBalancer
