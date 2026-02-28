@@ -16,10 +16,10 @@ spec:
   local:
     path: /data/mongo-volume
   nodeAffinity:
-  required:
-    nodeSelectorTerms:
-      - matchExpressions:
-          - key: kubernetes.io/hostname
-            operator: In
-            values:
-              - minikube
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - minikube
