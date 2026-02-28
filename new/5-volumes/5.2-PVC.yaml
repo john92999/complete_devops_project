@@ -1,0 +1,14 @@
+# To use the PV created we need to create a PVC (PersistentVolumeClaim) which will claim the PV and then we can use the PVC in our deployment to mount the volume in the deployment or pod
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-pvc
+  namespace: mongo
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+    storageClassName: "" # (this is required to use the PV created with local storage, if not specified it will try to create a new PV with default storage class and it will fail because we have already created a PV with local storage)
