@@ -1,3 +1,5 @@
+#If data is dtored at pod levels other pods cannot access it, if the pod is deleted data will be lost. This is not ideal for databases,so instead of {} we can use on which part the data will be stored on the node
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -30,4 +32,5 @@ spec:
               mountPath: /data/db #(This is directory in container where the data will be stored)
       volumes:
         - name: mongo-volume
-          emptyDir: {} # (here data is available as long as the pod is running, if the pod is deleted data will be lost)
+          hostPath:
+            path: /data/mongo-volume #(if running in minikube this will be stored in minikube vm, if running in cloud this will be stored on the node where the pod is running)

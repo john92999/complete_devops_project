@@ -1,0 +1,25 @@
+# If node is deleted data will be lost, if pod is deleted data will not be lost, if pod is rescheduled to another node data will be lost. This is not ideal for databases, so instead of {}, Mounth paths we will be using PV
+#ReadWriteMany - This means that the volume can be mounted as read-write by many nodes. This is ideal for shared storage
+#ReadWriteOnce - This means that the volume can be mounted as read-write by a single node. This is ideal for databases
+#ReadOnlyMany - This means that the volume can be mounted as read-only by many nodes. This is ideal for shared storage that does not need to be written to
+#ReadWriteOncePod - This means that the volume can be mounted as read-write by a single pod. This is ideal for databases that need to be written to by a single pod
+
+apiVersion: apps/v1
+kind: PersistentVolume
+metadata:
+  name: mongo-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  local:
+    path: /data/mongo-volume
+  nodeAffinity:
+  required:
+    nodeSelectorTerms:
+      - matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: In
+            values:
+              - minikube
