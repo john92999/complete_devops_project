@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mongo-db-job
+spec:
+  schedule: "0 0 * * *" # This will run the job every day at midnight
+  concurrencyPolicy: Allow
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 3
+  template:
+    spec:
+      containers:
+        - name: mongo-db
+          image: mongo:latest
+          command: ["/bin/sh", "-c", "echo 'Running MongoDB job'"]
+          args:
+            [
+              "mongodump --uri mongodb://user:password@mongodb-service:27017/mydb",
+            ]
+          volumeMounts:
+            - mountPath: "/usr/share/mongodump/"
+              name: "mongodump"
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: "admin"
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: "password"
+      volumes:
+        - name: mongodump
+          persistentVolumeClaim:
+            claimName: mongodump
+      restartPolicy: Never

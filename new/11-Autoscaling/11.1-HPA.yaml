@@ -1,0 +1,103 @@
+# ─────────────────────────────────────────────
+# Deployment that HPA will scale
+# ─────────────────────────────────────────────
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-app
+  namespace: default
+spec:
+  replicas: 2 # ← HPA will override this based on load
+  selector:
+    matchLabels:
+      app: web-app
+  template:
+    metadata:
+      labels:
+        app: web-app
+    spec:
+      containers:
+        - name: web-app
+          image: nginx:1.25
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "100m" # ← HPA needs requests defined to calculate scaling
+              memory: "128Mi"
+            limits:
+              cpu: "200m"
+              memory: "256Mi"
+
+---
+# ─────────────────────────────────────────────
+# HPA - Horizontal Pod Autoscaler
+# Scales pods based on CPU, Memory or custom metrics
+# ─────────────────────────────────────────────
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: web-app-hpa
+  namespace: default
+spec:
+  # ── Target deployment to scale ──────────────
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: web-app # ← must match deployment name above
+
+  # ── Pod count boundaries ────────────────────
+  minReplicas: 2 # ← never scale below 2 pods
+  maxReplicas: 10 # ← never scale above 10 pods
+
+  # ── Scaling Metrics ─────────────────────────
+  metrics:
+    # CPU based scaling
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 50 # ← scale up if avg CPU across pods exceeds 50%
+
+    # Memory based scaling
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 70 # ← scale up if avg memory exceeds 70%
+
+    # AverageValue type (instead of percentage)
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: AverageValue
+          averageValue: "200m" # ← scale up if avg cpu per pod exceeds 200m
+
+  # ── Scaling Behavior ─────────────────────────
+  behavior:
+    # Scale UP behavior
+    scaleUp:
+      stabilizationWindowSeconds: 30 # ← wait 30s before scaling up again
+      policies:
+        - type: Pods
+          value: 2 # ← add max 2 pods at a time
+          periodSeconds: 60 # ← per 60 seconds
+        - type: Percent
+          value: 50 # ← or add max 50% of current pods
+          periodSeconds: 60
+      selectPolicy: Max # ← use whichever policy adds MORE pods (Max/Min/Disabled)
+
+    # Scale DOWN behavior
+    scaleDown:
+      stabilizationWindowSeconds: 120 # ← wait 120s before scaling down (prevents flapping)
+      policies:
+        - type: Pods
+          value: 1 # ← remove max 1 pod at a time
+          periodSeconds: 60 # ← per 60 seconds
+        - type: Percent
+          value: 25 # ← or remove max 25% of current pods
+          periodSeconds: 60
+      selectPolicy: Min # ← use whichever policy removes FEWER pods (safer)
