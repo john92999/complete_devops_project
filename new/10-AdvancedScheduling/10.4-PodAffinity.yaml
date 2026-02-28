@@ -1,0 +1,127 @@
+# ─────────────────────────────────────────────
+# This example deploys a web app that PREFERS
+# to run on nodes where a cache pod is running
+# and REQUIRES to run on Linux nodes
+# ─────────────────────────────────────────────
+
+# First deploy the cache pod that web app will be attracted to
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cache-app
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cache
+  template:
+    metadata:
+      labels:
+        app: cache # ← web app will be attracted to pods with this label
+    spec:
+      containers:
+        - name: cache
+          image: redis:7.0
+          ports:
+            - containerPort: 6379
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "200m"
+              memory: "256Mi"
+
+---
+# Web app deployment with pod affinity rules
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-app
+  namespace: default
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      affinity:
+        # ─────────────────────────────────────────────
+        # Pod Affinity
+        # Attracts this pod TOWARDS nodes where
+        # matching pods are already running
+        # ─────────────────────────────────────────────
+        podAffinity:
+          # requiredDuringSchedulingIgnoredDuringExecution
+          # = HARD rule → pod MUST be scheduled on node
+          #   where matching pod exists, otherwise pending
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - cache # ← MUST run on same node as cache pod
+              topologyKey: "kubernetes.io/hostname" # ← same node level
+
+          # preferredDuringSchedulingIgnoredDuringExecution
+          # = SOFT rule → pod PREFERS node where matching
+          #   pod exists, but still schedules if not found
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 80 # ← higher weight = stronger preference (1-100)
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - cache # ← PREFERS to run near cache pod
+                topologyKey: "kubernetes.io/hostname"
+
+        # ─────────────────────────────────────────────
+        # Pod Anti-Affinity
+        # REPELS this pod AWAY from nodes where
+        # matching pods are already running
+        # ─────────────────────────────────────────────
+        podAntiAffinity:
+          # HARD rule → pod MUST NOT be on same node
+          # as another web pod (spreads pods across nodes)
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - web # ← MUST NOT run on same node as another web pod
+              topologyKey: "kubernetes.io/hostname"
+
+          # SOFT rule → pod PREFERS not to be on same
+          # zone as another web pod
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 50
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - web # ← PREFERS different zone than other web pods
+                topologyKey: "topology.kubernetes.io/zone"
+
+      containers:
+        - name: web
+          image: nginx:1.25
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "200m"
+              memory: "256Mi"

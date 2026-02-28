@@ -1,0 +1,52 @@
+There are many people who will be using the kubernetes if we don't have restrictions all the users has the ability to delete the pods and namespaces so we need to keep RBAC to restrict them.
+
+Authentication and Authorization:
+validation into the resource is called Authentication if we don't have access to the resource we will get 401 (Forbidden) error. And if we are valid user we will get 200 response.
+
+We must be authorized to perform action on a resource we should have necessary permission to make chnages on a resource
+
+![alt text](image-1.png)
+
+# Creating User
+
+Kubernets doesnot manage do user managment it should be done by external source like IAM
+In Minikube we can create user from mentioning user in ~/.kube/config
+Any user that provides a valid certificate signed by this certificate authority is considered authenticated
+
+![alt text](image-2.png)
+
+to create user first generate private key with
+`openssl genrsa -out john.key 2048`
+
+Now we need to create a certificate signing request for the user with the above key
+`openssl req -new -key john.key -out john.csr -subj "/CN=john/O=dev/O=example.org"` #(CN=common name or user name and O is group name)
+
+Now this certificate signing request must be signed by certificate authority
+`openssl x509 -req -CA ~/.minikube/ca.crt -CAkey ~/.minikube/ca.key -CAcreateserial -days 730 -in john.csr -out john.crt`
+
+Now we need to add the user to the cluster with kubectl
+`kubectl config set-credentials john --client-certificate=john.crt --client-key=john.key`
+
+now the user we can verify it in Kube config file
+
+![alt text](image-3.png)
+![alt text](image-5.png)
+
+now we need to create the context with same kube config set-context command
+`kubectl config set-context john-minikube --cluster=minikube --user=john --namespace=default`
+
+to use our cretaed cluster
+`kubectl config use-context john-minikube`
+
+Now all the requests will go from John user insted of minikube user
+Now if we run any commands we won't be having any permissions i.e Authorization
+
+# Authorization
+
+Switch back to minikube user
+`kubectl config use-context minikube`
+
+In kubernets we can give permission to a user using roles and role bindings
+
+For Roles to see what kind of actions it can perform
+`kubectl api-resources -o wide | grep pod`

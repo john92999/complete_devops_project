@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: production-app
+  namespace: default
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: production-app
+  template:
+    metadata:
+      labels:
+        app: production-app
+    spec:
+      # ─────────────────────────────────────────────
+      # Tolerations
+      # Allows this pod to be scheduled on nodes
+      # that have matching taints
+      # ─────────────────────────────────────────────
+      tolerations:
+        - key: "env" # ← matches the taint key
+          operator: "Equal" # ← Equal checks both key and value match
+          value: "production" # ← matches the taint value
+          effect: "NoExecute" # ← matches the taint effect
+          tolerationSeconds:
+            3600 # ← only for NoExecute — pod stays for 1hr before evicted
+            #    remove this line to stay indefinitely
+
+      containers:
+        - name: production-app
+          image: nginx:1.25
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "200m"
+              memory: "256Mi"

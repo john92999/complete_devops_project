@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ReplicasSet
+metadata:
+  name: nginx-replica
+  namespace: nginx
+spec:
+  nodeSelector:
+    team: analytics
+    disktype: ssd
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      name: nginx-pod
+      labels:
+        app: nginx
+  containers:
+    - name: nginx
+      image: nginx
+      ports:
+        - containerPort: 80
