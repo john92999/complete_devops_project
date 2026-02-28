@@ -18,8 +18,8 @@ metadata:
   namespace: todo
 type: Opaque
 stringData:
-  mongo-root-username: root
-  mongo-root-password: 321654
+  mongo-root-username: "root"
+  mongo-root-password: "321654"
   mongo-uri: "mongodb://root:321654@mongo-service:27017/todo?authSource=admin&retryWrites=true&w=majority"
 
 ---
