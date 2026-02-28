@@ -78,3 +78,7 @@ We have created a kubectl pods and tried to access the pods but as the pod don't
 
 To create SA use
 `kubectl create sa john-sa -n default`
+
+![alt text](image-9.png)
+
+use kube Auth to see the permissions
