@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: probe-demo
+  namespace: default
+spec:
+  containers:
+    - name: myapp
+      image: nginx
+      livenessProbe:
+        exec:
+          command:
+            - cat
+            - /tmp/healthy # ← if file doesn't exist → container restarts
+        initialDelaySeconds: 10 # ← wait 10s after container starts
+        periodSeconds: 5 # ← check every 5s
+        timeoutSeconds: 3 # ← fail if no response in 3s
+        successThreshold: 1 # ← must always be 1 for liveness
+        failureThreshold: 3 # ← restart after 3 consecutive failures
+
+      readinessProbe:
+        httpGet:
+          path: /health # ← hits this HTTP endpoint
+          port: 80
+          scheme: HTTP
+          httpHeaders:
+            - name: Custom-Header
+              value: health-check
+        initialDelaySeconds: 5 # ← wait 5s before first probe
+        periodSeconds: 5 # ← check every 5s
+        timeoutSeconds: 3 # ← fail if no response in 3s
+        successThreshold: 2 # ← must succeed twice in a row to be marked ready
+        failureThreshold: 3 # ← remove from endpoints after 3 consecutive failures

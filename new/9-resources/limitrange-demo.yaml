@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: demo-limitrange
+  namespace: default
+spec:
+  limits:
+    # ─────────────────────────────────────────────
+    # Container limits
+    # Applies to each individual container in a pod
+    # ─────────────────────────────────────────────
+    - type: Container
+      default: # ← applied if container doesn't specify limits
+        cpu: "500m"
+        memory: "256Mi"
+      defaultRequest: # ← applied if container doesn't specify requests
+        cpu: "100m"
+        memory: "128Mi"
+      max: # ← container cannot exceed this
+        cpu: "2"
+        memory: "1Gi"
+      min: # ← container must request at least this
+        cpu: "50m"
+        memory: "64Mi"
+      maxLimitRequestRatio: # ← limit cannot be more than X times the request
+        cpu: "4" # ← limit/request ratio max 4x (e.g request=100m limit=400m max)
+        memory: "2" # ← limit/request ratio max 2x
+
+    # ─────────────────────────────────────────────
+    # Pod limits
+    # Applies to the SUM of all containers in a pod
+    # ─────────────────────────────────────────────
+    - type: Pod
+      max: # ← total cpu/memory across all containers in pod
+        cpu: "4"
+        memory: "2Gi"
+      min: # ← total minimum across all containers in pod
+        cpu: "100m"
+        memory: "128Mi"
+      maxLimitRequestRatio:
+        cpu: "4"
+        memory: "2"
+
+    # ─────────────────────────────────────────────
+    # PersistentVolumeClaim limits
+    # Applies to storage requests in PVCs
+    # ─────────────────────────────────────────────
+    - type: PersistentVolumeClaim
+      max: # ← PVC cannot request more than this
+        storage: "10Gi"
+      min: # ← PVC must request at least this
+        storage: "1Gi"

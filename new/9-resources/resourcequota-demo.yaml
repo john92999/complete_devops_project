@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: demo-resourcequota
+  namespace: default
+spec:
+  hard:
+    # ─────────────────────────────────────────────
+    # Pod and Workload Count Limits
+    # ─────────────────────────────────────────────
+    pods: "10" # ← max 10 pods in this namespace
+    replicationcontrollers: "5" # ← max 5 replication controllers
+    deployments.apps: "5" # ← max 5 deployments
+    replicasets.apps: "5" # ← max 5 replicasets
+    statefulsets.apps: "3" # ← max 3 statefulsets
+    daemonsets.apps: "2" # ← max 2 daemonsets
+    jobs.batch: "5" # ← max 5 jobs
+    cronjobs.batch: "3" # ← max 3 cronjobs
+
+    # ─────────────────────────────────────────────
+    # Compute Resource Limits
+    # ─────────────────────────────────────────────
+    requests.cpu: "4" # ← total cpu requests across all pods max 4 cores
+    requests.memory: "4Gi" # ← total memory requests across all pods max 4Gi
+    limits.cpu: "8" # ← total cpu limits across all pods max 8 cores
+    limits.memory: "8Gi" # ← total memory limits across all pods max 8Gi
+
+    # ─────────────────────────────────────────────
+    # Storage Limits
+    # ─────────────────────────────────────────────
+    requests.storage: "20Gi" # ← total storage requests across all PVCs
+    persistentvolumeclaims: "5" # ← max 5 PVCs in this namespace
+    standard.storageclass.storage.k8s.io/requests.storage: "10Gi" # ← max 10Gi for specific storageclass
+    standard.storageclass.storage.k8s.io/persistentvolumeclaims: "3" # ← max 3 PVCs for specific storageclass
+
+    # ─────────────────────────────────────────────
+    # Service and Network Limits
+    # ─────────────────────────────────────────────
+    services: "5" # ← max 5 services
+    services.loadbalancers: "2" # ← max 2 LoadBalancer services
+    services.nodeports: "3" # ← max 3 NodePort services
+
+    # ─────────────────────────────────────────────
+    # Config and Secret Limits
+    # ─────────────────────────────────────────────
+    configmaps: "10" # ← max 10 configmaps
+    secrets: "10" # ← max 10 secrets
+    serviceaccounts: "5" # ← max 5 service accounts
+
+    # ─────────────────────────────────────────────
+    # Scoped Limits (by QoS class)
+    # ─────────────────────────────────────────────
+
+  scopes:
+    - NotTerminating # ← applies only to pods that don't have activeDeadlineSeconds set
+    - NotBestEffort # ← applies only to pods that don't have any resource requests/limits
+
