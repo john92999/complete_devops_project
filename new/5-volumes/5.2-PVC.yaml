@@ -11,4 +11,4 @@ spec:
   resources:
     requests:
       storage: 1Gi
-    storageClassName: "" # (this is required to use the PV created with local storage, if not specified it will try to create a new PV with default storage class and it will fail because we have already created a PV with local storage)
+  storageClassName: "" # (this is required to use the PV created with local storage, if not specified it will try to create a new PV with default storage class and it will fail because we have already created a PV with local storage)
