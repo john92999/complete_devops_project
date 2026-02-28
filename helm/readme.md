@@ -63,4 +63,19 @@ Note: helm is installed outside the kubernetes cluster and not inside
 
 https://github.com/pelthepu/todo-api
 
-https://github.com/pelthepu/helm/tree/main/todo-api
+# To create helm chart use helm create command
+
+helm create todo-api
+
+helm creare generates a basic directory structure and some template files for our new helm chart
+![alt text](image-4.png)
+![alt text](image-6.png)
+Chart.yml contains the metadata of the chart
+templates contain the kubernets manifest files
+If we need to add yaml we can add this to the directory and if we want to delete we can delete any yaml file which is not required
+
+With the placeholders above we can parameterize the resources
+
+values for these parameters can be defined in values.yaml
+
+So the code for it is in https://github.com/pelthepu/helm/tree/main/todo-api
