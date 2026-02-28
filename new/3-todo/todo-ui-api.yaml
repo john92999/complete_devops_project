@@ -1,3 +1,118 @@
+---
+# ─────────────────────────────────────────────
+# 1. Namespace
+# ─────────────────────────────────────────────
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: todo
+
+---
+# ─────────────────────────────────────────────
+# 2. MongoDB Secret
+# ─────────────────────────────────────────────
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mongo-secret
+  namespace: todo
+type: Opaque
+stringData:
+  mongo-root-username: root
+  mongo-root-password: 321654
+  mongo-uri: "mongodb://root:321654@mongo-service:27017/todo?authSource=admin&retryWrites=true&w=majority"
+
+---
+# ─────────────────────────────────────────────
+# 3. MongoDB PersistentVolumeClaim
+#    (stores data so it survives pod restarts)
+# ─────────────────────────────────────────────
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-pvc
+  namespace: todo
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+# ─────────────────────────────────────────────
+# 4. MongoDB Deployment
+# ─────────────────────────────────────────────
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo
+  namespace: todo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+        - name: mongo
+          image: mongo:6.0
+          ports:
+            - containerPort: 27017
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: mongo-root-username
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: mongo-root-password
+            - name: MONGO_INITDB_DATABASE
+              value: todo
+          volumeMounts:
+            - name: mongo-data
+              mountPath: /data/db
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "300m"
+      volumes:
+        - name: mongo-data
+          persistentVolumeClaim:
+            claimName: mongo-pvc
+
+---
+# ─────────────────────────────────────────────
+# 5. MongoDB Service
+# ─────────────────────────────────────────────
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-service
+  namespace: todo
+spec:
+  selector:
+    app: mongo
+  ports:
+    - name: mongo
+      protocol: TCP
+      port: 27017
+      targetPort: 27017
+
+---
+# ─────────────────────────────────────────────
+# 6. Todo API Deployment
+# ─────────────────────────────────────────────
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -10,7 +125,6 @@ spec:
       app: todo-api
   template:
     metadata:
-      name: todo-api-pod
       labels:
         app: todo-api
     spec:
@@ -21,8 +135,22 @@ spec:
             - containerPort: 8082
           env:
             - name: "spring.data.mongodb.uri"
-              value: "mongodb+srv://root:321654@cluster0.p9jq2.mongodb.net/todo?retryWrites=true&w=majority"
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: mongo-uri
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+
 ---
+# ─────────────────────────────────────────────
+# 7. Todo API Service
+# ─────────────────────────────────────────────
 apiVersion: v1
 kind: Service
 metadata:
@@ -36,7 +164,11 @@ spec:
       protocol: TCP
       port: 8080
       targetPort: 8082
+
 ---
+# ─────────────────────────────────────────────
+# 8. Todo UI Deployment
+# ─────────────────────────────────────────────
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -49,7 +181,6 @@ spec:
       app: todo-ui
   template:
     metadata:
-      name: todo-ui-pod
       labels:
         app: todo-ui
     spec:
@@ -61,7 +192,18 @@ spec:
           env:
             - name: "REACT_APP_BACKEND_SERVER_URL"
               value: "http://todo.com/api"
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+
 ---
+# ─────────────────────────────────────────────
+# 9. Todo UI Service
+# ─────────────────────────────────────────────
 apiVersion: v1
 kind: Service
 metadata:
@@ -74,3 +216,35 @@ spec:
     - name: http
       port: 3001
       targetPort: 80
+
+---
+# ─────────────────────────────────────────────
+# 10. Ingress
+# ─────────────────────────────────────────────
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: todo-ingress
+  namespace: todo
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: todo.com
+      http:
+        paths:
+          - path: /api(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: todo-api-service
+                port:
+                  number: 8080
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: todo-ui-service
+                port:
+                  number: 3001
