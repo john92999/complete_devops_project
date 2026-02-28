@@ -1,0 +1,22 @@
+# In real time pods are deleted by the developers and PV are deleted by the administrators
+# As PV is a cluster wide object if pv is deleted we can't ask admin to create PV erytime to so we write storage class which will automatically create PV when PVC is created, this is called dynamic provisioning of PV
+# Storage class tells us how a PV should be created and how it should be provisioned.
+# If there is no PV and in PVC we have written the storage class then the storage class will automatically create a PV for us with the required specifications
+
+#volumeBindingMode: WaitForFirstConsumer - This means that the PV will be created only when there is a PVC is used by a pod
+#volumeBindingMode: Immediate - This means that teh PV will be created as soon as the PVC is created, no pod needs to use the PVC
+
+#ReclaimPolicy: Delet - This means that when the PVC is deleted the PV will also be deleted, this is ideal for cloud storage where we are charged for the storage used
+#ReclaimPolicy: Retain - This means that when the PVC is deleted the PV will not be deleted, this is ideal for local storage where we are not charged for the storage used and we want to keep the data even if the PVC is deleted
+
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: local-storage
+  namespace: mongo
+spec:
+  provisioner: kubernetes.io/no-provisioner
+  volumeBindingMode: WaitForFirstConsumer
+  reclaimPolicy: Retain
+# there are many provisioners available for different cloud providers.
+

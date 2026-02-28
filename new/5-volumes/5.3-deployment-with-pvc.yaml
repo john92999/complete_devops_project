@@ -32,3 +32,9 @@ spec:
         - name: mongo-volume
           persistentVolumeClaim:
             claimName: mongo-pvc #(Here we are using PVC instead of emptyDir or hostPath, this will allow us to store data even if the pod is deleted and also we can use the same PVC in other pods if needed)
+
+
+#minikube ssh -n minikube -- sudo mkdir -p /data/mongo-volume
+#minikube ssh -n minikube-m02 -- sudo mkdir -p /data/mongo-volume
+#minikube ssh -n minikube-m03 -- sudo mkdir -p /data/mongo-volume
+#minikube ssh -n minikube-m04 -- sudo mkdir -p /data/mongo-volume
