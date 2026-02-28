@@ -71,3 +71,10 @@ Service Accounts are special type of user when a namespace is created the defaul
 they can also craete the custom service accounts in the namespaces.
 
 `kubectl get sa`
+
+We have created a kubectl pods and tried to access the pods but as the pod don't have the access it says it don't have the access.
+
+![alt text](image-8.png)
+
+To create SA use
+`kubectl create sa john-sa -n default`
