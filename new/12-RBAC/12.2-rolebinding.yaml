@@ -1,0 +1,12 @@
+apiversion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: read-pods
+subjects:
+  - kind: User
+    name: john # ← this is the user that will be able to read pods in the default namespace
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: pod-reader # ← this is the role that we created in the previous step
+  apiGroup: rbac.authorization.k8s.io

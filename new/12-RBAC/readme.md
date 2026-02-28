@@ -50,3 +50,7 @@ In kubernets we can give permission to a user using roles and role bindings
 
 For Roles to see what kind of actions it can perform
 `kubectl api-resources -o wide | grep pod`
+
+After doing the role we need to connect the role to the user so that the user will get the correct role
+The role binding can be done for users, Role and ServiceAccounts
+![alt text](image-6.png)
