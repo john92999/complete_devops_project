@@ -54,3 +54,20 @@ For Roles to see what kind of actions it can perform
 After doing the role we need to connect the role to the user so that the user will get the correct role
 The role binding can be done for users, Role and ServiceAccounts
 ![alt text](image-6.png)
+![alt text](image-7.png)
+
+# Cluster Role Binding
+
+This will give access to all the pods in the cluster
+
+Instead of giving access to users we can also give to group so that all the users within the group will have the same permission
+
+# Service Accounts
+
+If we want the spring boot or python application or any program to access the same resources its is not ok to keep the credentials in the application
+
+Service Accounts are special type of user when a namespace is created the default SA is created in the namespace pods where our application runs use these default service accounts to authenticate themselves with API Server and if we don't explicitly mebtion what service account we use all pods will use this default service accounts.
+
+they can also craete the custom service accounts in the namespaces.
+
+`kubectl get sa`
