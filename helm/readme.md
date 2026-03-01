@@ -129,3 +129,65 @@ dependencies:
 - name: appmesh-controller
   version: "1.13.3"
   repository: "https://aws.github.io/eks-charts"
+
+![alt text](image-10.png)
+
+helm env --> Displays environment information related to Helm client configuration, Useful for troubleshooting and verifying configuration paths and repository settings.
+![alt text](image-11.png)
+
+helm get --> Retrieves detailed information about a release.
+Subcommands include:
+`helm get all`: Retrieves all release information.
+`helm get hooks`: Shows hooks defined in the chart, which are scripts triggered during lifecycle events (install, upgrade, rollback).
+`helm get manifest`: Shows rendered Kubernetes manifests from the chart.
+`helm get notes`: Displays release notes.
+`helm get values`: Shows values used in the release deployment (with options to display default or user-modified values).
+
+helm history --> Lists revision history of a release, showing versions, deployment dates, and statuses.
+![alt text](image-12.png)
+
+helm install --> Installs a chart onto a Kubernetes cluster `helm install <release-name> <chart-path>`
+![alt text](image-13.png)
+
+in service.yaml the type of service is ClusterIP if we want to change it we can change it from command line using `helm install test mychart/ --set service.type=NodePort`
+![alt text](image-14.png)
+This doesn't update tyhe code but while building it will be taken into consedaration.
+
+We can also install external charts like
+`helm repo add jfrog https://charts.jfrog.io`
+`helm repo update`
+`helm install jfrog/artifactory-oss --version 2.2.2 --generate-name`
+
+helm lint --> To validate charts before deploying into kubernets cluster `helm lint <chart-name>`
+
+helm package --> helm package is basically packaging the chart direction into package archive
+![alt text](image-15.png)
+`helm package <package-name> --destination /home/ --version <any version number>`
+
+helm plugin --> if we want to install extra plugin
+`helm plugin install <url of plugin>`
+
+helm pull --> It will pull the charts
+`helm pull <chart-name> --repo <repo url>`
+
+helm repo --> We can add repo `helm repo add jfrog https://charts.jfrog.io`
+`helm repo update`
+
+helm rollback --> if we have many releases or updates if there is any issue we want to rollback to previous version we can do it using helm rollback command
+`helm rollback <release-name> <revison>`
+![alt text](image-16.png)
+if there is any problem to delete a pod we can use `helm rollback <release-name> <revison-number> --force`
+
+helm search --> to search for a dependency we use search `helm search hub nginx`, If we want to search in repo we use `helm search repo nginx`
+
+helm show --> `helm show chart <chart-name>` it will show chart metadata
+
+helm status --> `helm status <release-name>` it will show the status of the release
+
+helm template --> `helm template <some-name> <chart-name>` it will render and show what the yaml will look like
+
+helm upgrade --> It will upgrade the previous released chart
+
+helm verify --> It will verify the archive file
+
+helm version --> It will show the helm version
