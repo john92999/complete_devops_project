@@ -73,3 +73,48 @@ Values.yaml --> A YAML file of default configuration values for the chart
 Templates will have a file similar to kubernetes YAML files except varaibale interpoltaion and ability to call the functions within the templates, We will get values from Values.Yaml and functions from \_helpers
 
 ![alt text](image-4.png)
+
+`helm create mychart` to create the chart it will craete a folder called mychart
+
+Test folder --> If there is any code in test it will be run before running the helm if that is success only them helm will proceed if it fails helm will stop
+
+`helm lint ./mychart/` this will check for any syntax errors
+
+To see what the yaml files will look like we can use `helm install --dry-run --debug --generate-name`
+
+To use helm `helm install example ./mychart/ --set service.type=NodePort` here we are using in own cluster so we need to set type as NodePort
+
+![alt text](image-5.png)
+![alt text](image-6.png)
+
+use `helm unistall example` to delete the entire kubernetes cluster
+![alt text](image-7.png)
+
+# Helm commands
+
+![alt text](image-8.png)
+completion -- Generates an auto-completion script for the specified shell (e.g., Bash).
+
+if everyday we are using the `helm list` command it is better to us the shortcuts
+To do the shortcut way `source <(helm completion bash)` so now scripts will be sourced to startup scripts
+
+helm create -- This command creates a chart directory along with the common files and directories used in the chart.
+Key files created:
+Chart.yaml: Metadata and dependencies of the chart.
+values.yaml: Default configuration values.
+templates/: Contains Kubernetes manifest templates (e.g., ingress, deployment).
+tests/: Test manifests to validate deployments.
+Overwrites existing files if the same chart name is used, so caution is advised to avoid losing changes
+
+helm dependency -- Manages chart dependencies stored under the charts/ folder.
+
+have added dependency in charts.yaml file
+\
+dependencies:
+
+- name: appmesh-controller
+  version: "0.5.0"
+  repository: "https://aws.github.io/eks-charts"
+
+basically when creating chart we won't have Charts folder
+`helm dep build`: Rebuilds the charts/ folder based on Chart.lock file
