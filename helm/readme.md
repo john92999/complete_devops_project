@@ -209,3 +209,10 @@ In helm we have many builtin objects to transform the data with our own data we 
 | is the powerful feature of templatge language, output of first can be moved to output of sceond one
 
 cloning the repository https://github.com/DeekshithSN/Helm_charts.git
+
+quote fucntion it will give quotation to the values
+
+The below code is from 1_Tem_functions to check run `helm install my-app --debug --dry-run 1_Tem_functions/`
+
+food: {{ quote .Values.favorite.food }}
+city: {{.Values.favorite.city | default "Bangalore"}}
