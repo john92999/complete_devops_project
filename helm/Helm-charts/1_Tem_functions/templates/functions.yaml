@@ -8,4 +8,4 @@ data:
   who: {{ required "A valid .Values.who entry required!" .Values.who }}
   drink: {{  .Values.favorite.drink }}
   food: {{ quote .Values.favorite.food }}
-  city: {{.Values.favorite.city | default "Bangalore"}}
+  city: {{.Values.favorite.city | repeat 3 | quote | default "bangkok"}}

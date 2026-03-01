@@ -236,9 +236,46 @@ drink: coffe
 food: "Pizza"
 city: Bangalore
 
-in Values .yaml i have added
+in Values .yaml i have added city
 
 favorite:
 drink: coffe
 food: Pizza
 city: Visakhapatnam
+
+In output the value is now
+
+HOOKS:
+MANIFEST:
+
+---
+
+# Source: mychart/templates/functions.yaml
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+name: my-app-configmap
+lables:
+data:
+myvalue: "Hello World"
+who: Deekshithsn
+drink: coffe
+food: "Pizza"
+city: Visakhapatnam
+
+Repeat
+
+```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-configmap
+  lables:
+data:
+  myvalue: "Hello World"
+  who: {{ required "A valid .Values.who entry required!" .Values.who }}
+  drink: {{  .Values.favorite.drink }}
+  food: {{ quote .Values.favorite.food }}
+  city: {{.Values.favorite.city | repeat 3 | quote | default "bangkok"}}
+```
