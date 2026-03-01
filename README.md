@@ -51,13 +51,21 @@ helm install prometheus prometehus-community/prometheus -n monitoring
 
 git clone https://github.com/pelthepu/todo-api.git
 
+```
+sudo apt install openjdk-11-jdk -y
+update-java-alternatives --list
+sudo update-alternatives --config java # → Select the java-11 option
+java -version
+mvn spring-boot:run
+
+```
+
 For spring boot application we need to add actuator dependency the pom.xml file
 
 ```
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
-			<scope>test</scope>
 		</dependency>
 
 ```
@@ -68,3 +76,5 @@ Now in Src/main/java/resources/Application.properties we need to add which appli
 management.endpoints.web.exposure.include=*
 
 ```
+
+then run `mvn spring-boot:run` to build the application
