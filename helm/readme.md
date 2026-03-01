@@ -61,21 +61,15 @@ helm use the same configuration used by ~./kube/config unless specifically speci
 
 Note: helm is installed outside the kubernetes cluster and not inside
 
-https://github.com/pelthepu/todo-api
+The Format helm uses to deploy the application is called chart which is basically a bunch of files
 
-# To create helm chart use helm create command
+Charts --> Manually managed chart dependency can be placed in this directory
+Templates --> This directory contains the template files like deployment, Services and Many more these are combined with configuration values from values.yaml
+Chart.yaml --> A YAML file which gives the metadata of the chart such as chart name and version, maintainer information, a relevant website and search keyword
+Requirment.yaml --> A YAML file that list the chart dependencies which will get dynamically downloaded when we run helm instructions
+Values.yaml --> A YAML file of default configuration values for the chart
+\_helpers --> Function will be defined in \_helpers file
 
-helm create todo-api
+Templates will have a file similar to kubernetes YAML files except varaibale interpoltaion and ability to call the functions within the templates, We will get values from Values.Yaml and functions from \_helpers
 
-helm creare generates a basic directory structure and some template files for our new helm chart
 ![alt text](image-4.png)
-![alt text](image-6.png)
-Chart.yml contains the metadata of the chart
-templates contain the kubernets manifest files
-If we need to add yaml we can add this to the directory and if we want to delete we can delete any yaml file which is not required
-
-With the placeholders above we can parameterize the resources
-
-values for these parameters can be defined in values.yaml
-
-So the code for it is in https://github.com/pelthepu/helm/tree/main/todo-api
