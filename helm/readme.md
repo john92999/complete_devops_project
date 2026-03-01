@@ -279,3 +279,71 @@ data:
   food: {{ quote .Values.favorite.food }}
   city: {{.Values.favorite.city | repeat 3 | quote | default "bangkok"}}
 ```
+
+```
+MANIFEST:
+---
+# Source: mychart/templates/functions.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-app-configmap
+  lables:
+data:
+  myvalue: "Hello World"
+  who: Deekshithsn
+  drink: coffe
+  food: "Pizza"
+  city: "VisakhapatnamVisakhapatnamVisakhapatnam"
+---
+
+```
+
+Upper function -- It converts the given string to upper case
+
+Lower function -- It converts the given string to lower case
+
+include function -- If we want to use \_helpers.tpl in any one of the Yaml files we will use include
+
+\_helpers.tpl
+
+```
+
+{{- define "mychart.serviceAccountName" -}}
+{{- if .Values.serviceAccount.create }}
+{{- default (include "mychart.fullname" .) .Values.serviceAccount.name }}
+{{- else }}
+{{- default "default" .Values.serviceAccount.name }}
+{{- end }}
+{{- end }}
+
+```
+
+deployment.yaml
+
+```
+spec:
+{{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+{{- end }}
+  selector:
+    matchLabels:
+      {{- include "mychart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+    {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        {{- include "mychart.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "mychart.serviceAccountName" . }}
+
+```
+
+Require -- It makes particular value to be always mandatory
