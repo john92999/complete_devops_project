@@ -5,6 +5,7 @@
 favorite:
   drink: coffe
   food: Pizza
+  city: Visakhapatnam
 
 who: Deekshithsn
 
@@ -29,7 +30,7 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
-podAnnotations: 
+podAnnotations:
   createdBy: helm
   hook: nohook
 

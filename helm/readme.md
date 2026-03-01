@@ -216,3 +216,29 @@ The below code is from 1_Tem_functions to check run `helm install my-app --debug
 
 food: {{ quote .Values.favorite.food }}
 city: {{.Values.favorite.city | default "Bangalore"}}
+
+HOOKS:
+MANIFEST:
+
+---
+
+# Source: mychart/templates/functions.yaml
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+name: my-app-configmap
+lables:
+data:
+myvalue: "Hello World"
+who: Deekshithsn
+drink: coffe
+food: "Pizza"
+city: Bangalore
+
+in Values .yaml i have added
+
+favorite:
+drink: coffe
+food: Pizza
+city: Visakhapatnam
