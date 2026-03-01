@@ -10,11 +10,24 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import io.micrometer.core.instrument.Counter;
+
 @Service
 public class TodoService {
 
     @Autowired
     TodoRepository todoRepository;
+
+    private Counter todocounter;
+    private MeterRegistry meterRegistry;
+
+    public TodoService(MeterRegistry meterRegistry) {
+        this.meterRegistry = meterRegistry;
+        this.todocounter = Counter.builder("todo_requests_total")
+                .tags(...tags:"status", "created")
+                .description("Total number of requests to the Todo API")
+                .register(meterRegistry);
+    }
 
     public List<Todo> findAll() {
         Sort sortByCreatedAtDesc = Sort.by(Sort.Direction.DESC, "createdAt");
@@ -23,6 +36,7 @@ public class TodoService {
 
     public Todo createTodo(Todo todo) {
         todo.setCompleted(false);
+        this.todocounter.increment();
         return todoRepository.save(todo);
     }
 
@@ -42,4 +56,8 @@ public class TodoService {
         }).orElse(ResponseEntity.notFound().build());
     }
 
+    private void recordPendingItems() {
+        long pendingItems = todoRepository.countByCompleted(false);
+        meterRegistry.gauge(name: "pending_todo_items", pendingItems);
+    }
 }
