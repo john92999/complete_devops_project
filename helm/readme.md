@@ -191,3 +191,21 @@ helm upgrade --> It will upgrade the previous released chart
 helm verify --> It will verify the archive file
 
 helm version --> It will show the helm version
+
+# Helm builtin objects
+
+objects in helm are passed into a template from the template engine
+
+Release Object --
+
+Release.Name the object describes the release itself
+![alt text](image-17.png)
+Release.Namespace
+Release.IsUpgrade
+
+# Helm templates
+
+In helm we have many builtin objects to transform the data with our own data we will use helm templates
+| is the powerful feature of templatge language, output of first can be moved to output of sceond one
+
+cloning the repository https://github.com/DeekshithSN/Helm_charts.git
