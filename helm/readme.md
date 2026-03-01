@@ -117,4 +117,15 @@ dependencies:
   repository: "https://aws.github.io/eks-charts"
 
 basically when creating chart we won't have Charts folder
-`helm dep build`: Rebuilds the charts/ folder based on Chart.lock file
+`helm dep build`: Rebuilds the charts/ folder based on Chart.lock file and creates charts folder and installs the dependency
+![alt text](image-9.png)
+
+`helm dep list` -- lists the dependencies being used
+
+`helm dep update` -- Updates dependencies by downloading specified charts as per Chart.yaml
+
+dependencies:
+
+- name: appmesh-controller
+  version: "1.13.3"
+  repository: "https://aws.github.io/eks-charts"
