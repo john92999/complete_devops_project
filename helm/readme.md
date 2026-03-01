@@ -346,4 +346,36 @@ spec:
 
 ```
 
-Require -- It makes particular value to be always mandatory
+Required -- It makes particular value to be always mandatory
+
+In functions.yaml we have added time
+
+```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-configmap
+  lables:
+data:
+  myvalue: "Hello World"
+  who: {{ required "A valid .Values.who entry required!" .Values.who }}
+  drink: {{  .Values.favorite.drink }}
+  food: {{ quote .Values.favorite.food }}
+  city: {{.Values.favorite.city | repeat 3 | quote | default "bangkok"}}
+  time: {{ required "A valid .Values.time entry required!" .Values.favorite.time | quote }}
+
+```
+
+So if we run without it it fails
+
+```
+ubuntu@ubuntu:~/complete_devops_project/helm/Helm-charts$ helm install my-app --debug --dry-run 1_Tem_functions/
+install.go:225: 2026-03-01 20:28:59.555607926 +0530 IST m=+0.036381049 [debug] Original chart version: ""
+install.go:242: 2026-03-01 20:28:59.555672958 +0530 IST m=+0.036446079 [debug] CHART PATH: /home/ubuntu/complete_devops_project/helm/Helm-charts/1_Tem_functions
+
+Error: INSTALLATION FAILED: execution error at (mychart/templates/functions.yaml:12:11): A valid .Values.time entry required!
+helm.go:92: 2026-03-01 20:28:59.574621248 +0530 IST m=+0.055394370 [debug] execution error at (mychart/templates/functions.yaml:12:11): A valid .Values.time entry required!
+INSTALLATION FAILED
+main.newInstallCmd.func2
+
+```
