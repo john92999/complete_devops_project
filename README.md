@@ -78,3 +78,13 @@ management.endpoints.web.exposure.include=*
 ```
 
 then run `mvn spring-boot:run` to build the application
+
+As prometheus expects these metrics to be in a specific format Now we need to add micrometer dependency, This dependency pull metrics and converts them into the format understandable by prometehus and exposes over /prometehus/actuataor end points
+
+```
+<dependency>
+    <groupId>io.micrometer</groupId>
+    <artifactId>micrometer-registry-prometheus</artifactId>
+</dependency>
+
+```
