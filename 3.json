@@ -1,0 +1,16 @@
+{
+  "Version": "2012-10-17",
+  "Id": "SecondPolicyForLearning",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "*",
+      "Resource": "arn:aws:s3:::sample-bucket"
+    },
+    {
+      "Effect": "Deny",
+      "Action": "DeleteBucket",
+      "Resource": "arn:aws:s3:::sample-bucket" //Doing anything on the sample bucket except deleting
+    }
+  ]
+}
