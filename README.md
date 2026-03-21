@@ -105,3 +105,43 @@ Lets try to access anything apart from s3 (ec2)
 ![alt text](image-26.png)
 
 So except s3 remaining all will be deny
+
+Arn Format
+arn:partition:service:region:account-id:resource-type/resource-id
+
+Global Conditional Keys
+https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_condition-keys.html
+
+In AWS we have AWS policy generator and Simulator to check if the policies are correct or not
+
+Automating User/Role/Policy Managment
+
+--> There are 2 possible ways of automation
+--> By Command line and then enhancing the scripts
+--> BY AWS SDK using code from this
+
+Lets create an IAM User with Administrator permissions who will automate the user creation
+
+![alt text](image-27.png)
+
+Now to enable access to the admin after installation of AWS CLI
+
+![alt text](image-28.png)
+
+Verify if the access is working or not. The output will be different to you but the command should not throw an error
+
+![alt text](image-29.png)
+
+AWS IAM Commands - https://docs.aws.amazon.com/cli/latest/reference/iam/
+
+![alt text](image-30.png)
+
+Now lets verify in the console
+
+![alt text](image-31.png)
+
+Now give the password for the ironman user as Avengers@123
+
+We need to create login profile
+
+![alt text](image-32.png)
