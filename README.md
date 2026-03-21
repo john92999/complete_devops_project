@@ -31,3 +31,39 @@ Scenario 3: Consider we have 5 admins who require same set of permissions, so ra
 ![alt text](image-13.png)
 ![alt text](image-14.png)
 ![alt text](image-15.png)
+
+IAM Policy --> A policy is an object in AWS thet when associated with an identity or resources defines their permission.
+AWS evaluates these policy when an IAM Principal (user or role) makes a request.
+
+```
+policy = {
+    <version_block>
+    <id_block>
+    <statement_block>
+}
+
+```
+
+```
+"Version": ("2008-10-17" | "2012-10-17")
+"Id": optional (eg: "Admin_policy" | "x45gwhug-2663-46f1-a904-12bjbj45iw45")
+
+```
+
+Statement:
+_ This is the main element of the policy
+_ This can contain or or array of statements
+
+```
+"Statement": [{...}, {...}]
+
+<statement> = {
+    <sid_block?> --> Optional,
+    <principal_block?>  --> Optional,
+    <effect_block>,
+    <action_block>,
+    <resources_block>,
+    <condition_block>  --> Optional
+}
+
+```
