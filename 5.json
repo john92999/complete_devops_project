@@ -1,0 +1,16 @@
+{
+  "Version": "2012-10-17",
+  "Id": "FourthPolicyForLearning",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "s3:*",
+      "Resource": "*"
+    },
+    {
+      "Effect": "Deny",
+      "Action": ["s3:DeleteBucket", "s3:TerminateInstances"],
+      "Resource": "*"
+    }
+  ]
+}

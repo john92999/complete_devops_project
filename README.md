@@ -67,3 +67,41 @@ Statement:
 }
 
 ```
+
+Action, Resources and ConditionKeys - https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazons3.html
+
+Activity 1: Lets create an IAM Policy for full access on s3
+
+```
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "",
+            "Action":  "",
+            "Resource": ""
+        }
+    ]
+}
+
+```
+
+![alt text](image-16.png)
+![alt text](image-17.png)
+![alt text](image-18.png)
+![alt text](image-19.png)
+![alt text](image-20.png)
+
+Now lets create an IAM User with console access
+![alt text](image-21.png)
+![alt text](image-22.png)
+![alt text](image-23.png)
+![alt text](image-24.png)
+
+Now login as the qtdevops user in the different browser/incognito mode
+![alt text](image-25.png)
+
+Lets try to access anything apart from s3 (ec2)
+![alt text](image-26.png)
+
+So except s3 remaining all will be deny
