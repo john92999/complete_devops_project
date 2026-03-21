@@ -9,7 +9,7 @@
     },
     {
       "Effect": "Deny",
-      "Action": "DeleteBucket",
+      "Action": "s3:DeleteBucket", //<servicename>:<action>
       "Resource": "arn:aws:s3:::sample-bucket" //Doing anything on the sample bucket except deleting
     }
   ]
