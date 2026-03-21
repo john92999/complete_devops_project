@@ -51,8 +51,8 @@ policy = {
 ```
 
 Statement:
-_ This is the main element of the policy
-_ This can contain or or array of statements
+--> This is the main element of the policy
+--> This can contain or or array of statements
 
 ```
 "Statement": [{...}, {...}]

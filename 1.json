@@ -1,0 +1,11 @@
+{
+  "Version": "2012-10-17",
+  "Id": "FirstPolicyForLearning",
+  "Statement": [
+    {
+      "Effect": "Allow", //permission
+      "Action": "*", //For doing what
+      "Resource": "*" //Any resource
+    }
+  ]
+}
