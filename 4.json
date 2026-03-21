@@ -1,0 +1,16 @@
+{
+  "Version": "2012-10-17",
+  "Id": "ThirdPolicyForLearning",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "s3:*",
+      "Resource": "*" //Allow everything on s3
+    },
+    {
+      "Effect": "Deny",
+      "Action": "ec2:*",
+      "Resource": "*" //Deny everything on ec2
+    }
+  ]
+}
